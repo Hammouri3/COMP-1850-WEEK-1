@@ -1,132 +1,115 @@
-//// COMPUTE THE MINIMUM OF TWO VALUES
-// Sys.min(x, y)
-// Returns the smaller value.
+//// Sys.min
+//// Returns the smaller of the two arguments.
 
 function Sys.min 0
     push argument 0
     push argument 1
     lt
-    if-goto MIN_X
+    if-goto MIN_RETURN_FIRST
 
     push argument 1
     return
 
-label MIN_X
+label MIN_RETURN_FIRST
     push argument 0
     return
 
 
 
-//// COMPUTE THE MAXIMUM OF TWO VALUES
-// Sys.max(x, y)
-// Returns the larger value.
+//// Sys.max
+//// Returns the larger of the two arguments.
 
 function Sys.max 0
     push argument 0
     push argument 1
     gt
-    if-goto MAX_X
+    if-goto MAX_RETURN_FIRST
 
     push argument 1
     return
 
-label MAX_X
+label MAX_RETURN_FIRST
     push argument 0
     return
 
 
 
-//// COMPUTE THE RANGE OF AN ARRAY.
-// Sys.range(baseAddress, numberOfElements)
-// argument 0 = array base address
-// argument 1 = number of elements
-// Returns max - min
-// If numberOfElements <= 1, returns 0.
+//// Sys.range
+//// argument 0 = base address of array
+//// argument 1 = number of elements
+//// returns maximum - minimum
+//// if n <= 1, returns 0
+////
+//// local 0 = minimum
+//// local 1 = maximum
+//// local 2 = index
+//// local 3 = current value
 
-function Sys.range 2
-    // local 0 = min
-    // local 1 = max
-    // temp 0 = current address
-    // temp 1 = remaining count
-    // temp 2 = current value
-
+function Sys.range 4
     // if n <= 1, return 0
     push argument 1
     push constant 1
     gt
-    if-goto RANGE_START
+    if-goto RANGE_BEGIN
 
     push constant 0
     return
 
-label RANGE_START
-    // temp 0 = base address
-    push argument 0
-    pop temp 0
-
+label RANGE_BEGIN
     // local 0 = array[0]
-    push temp 0
+    push argument 0
     pop pointer 1
     push that 0
     pop local 0
 
-    // local 1 = array[0]
+    // local 1 = local 0
     push local 0
     pop local 1
 
-    // temp 0 = base address + 1
-    push temp 0
+    // index = 1
     push constant 1
-    add
-    pop temp 0
-
-    // temp 1 = n - 1
-    push argument 1
-    push constant 1
-    sub
-    pop temp 1
+    pop local 2
 
 label RANGE_LOOP
-    // if remaining count == 0, finish
-    push temp 1
-    push constant 0
-    eq
-    if-goto RANGE_DONE
+    // continue while index < n
+    push local 2
+    push argument 1
+    lt
+    if-goto RANGE_CHECK_VALUE
 
-    // temp 2 = RAM[current address]
-    push temp 0
+    goto RANGE_FINISH
+
+label RANGE_CHECK_VALUE
+    // current value = array[index]
+    push argument 0
+    push local 2
+    add
     pop pointer 1
     push that 0
-    pop temp 2
+    pop local 3
 
-    // local 0 = min(local 0, temp 2)
+    // minimum = Sys.min(minimum, current value)
     push local 0
-    push temp 2
+    push local 3
     call Sys.min 2
     pop local 0
 
-    // local 1 = max(local 1, temp 2)
+    // maximum = Sys.max(maximum, current value)
     push local 1
-    push temp 2
+    push local 3
     call Sys.max 2
     pop local 1
 
-    // current address++
-    push temp 0
+    // index++
+    push local 2
     push constant 1
     add
-    pop temp 0
-
-    // remaining count--
-    push temp 1
-    push constant 1
-    sub
-    pop temp 1
+    pop local 2
 
     goto RANGE_LOOP
 
-label RANGE_DONE
-    // return max - min
+label RANGE_FINISH
+    // return maximum - minimum
     push local 1
     push local 0
     sub
@@ -134,10 +117,10 @@ label RANGE_DONE
 
 
 
-// Do not change this part when submitting.
+//// Entry point for the supplied test script.
 
 function Sys.init 0
     call Sys.range 2
 
-label WHILE
-    goto WHILE
+label END
+    goto END
