@@ -1,123 +1,108 @@
 //// COMPUTE THE MINIMUM OF TWO VALUES
-
 function Sys.min 0
     push argument 0
     push argument 1
     lt
-    if-goto MIN_FIRST
+    if-goto SYS_MIN_FIRST_IS_SMALLER
 
     push argument 1
     return
 
-label MIN_FIRST
+label SYS_MIN_FIRST_IS_SMALLER
     push argument 0
     return
 
 
 
 //// COMPUTE THE MAXIMUM OF TWO VALUES
-
 function Sys.max 0
     push argument 0
     push argument 1
     gt
-    if-goto MAX_FIRST
+    if-goto SYS_MAX_FIRST_IS_BIGGER
 
     push argument 1
     return
 
-label MAX_FIRST
+label SYS_MAX_FIRST_IS_BIGGER
     push argument 0
     return
 
 
 
-//// COMPUTE THE RANGE OF AN ARRAY
-// argument 0 = array base address
-// argument 1 = number of elements
+//// COMPUTE THE RANGE OF AN ARRAY.
+// ARG0 = memory address where the array starts
+// ARG1 = number of elements in the array
+//
 // local 0 = current minimum
 // local 1 = current maximum
-// temp 0 = current address
-// temp 1 = remaining elements
-// temp 2 = current array value
-
-function Sys.range 2
-    // If n <= 1, return 0
+// local 2 = index
+// local 3 = current array value
+function Sys.range 4
+    // If n <= 1, range is 0.
     push argument 1
     push constant 1
     gt
-    if-goto RANGE_START
+    if-goto SYS_RANGE_START
 
     push constant 0
     return
 
-label RANGE_START
-    // temp 0 = base address
+label SYS_RANGE_START
+    // Read array[0] into min.
     push argument 0
-    pop temp 0
-
-    // min = array[0]
-    push temp 0
     pop pointer 1
     push that 0
     pop local 0
 
-    // max = array[0]
-    push local 0
-    pop local 1
-
-    // current address = base + 1
-    push temp 0
-    push constant 1
-    add
-    pop temp 0
-
-    // remaining = n - 1
-    push argument 1
-    push constant 1
-    sub
-    pop temp 1
-
-label RANGE_LOOP
-    // If remaining == 0, finish
-    push temp 1
-    push constant 0
-    eq
-    if-goto RANGE_DONE
-
-    // current value = RAM[current address]
-    push temp 0
+    // Read array[0] into max.
+    push argument 0
     pop pointer 1
     push that 0
-    pop temp 2
+    pop local 1
+
+    // index = 1
+    push constant 1
+    pop local 2
+
+label SYS_RANGE_LOOP
+    // while index < n
+    push local 2
+    push argument 1
+    lt
+    if-goto SYS_RANGE_BODY
+    goto SYS_RANGE_END
+
+label SYS_RANGE_BODY
+    // current = array[index]
+    push argument 0
+    push local 2
+    add
+    pop pointer 1
+    push that 0
+    pop local 3
 
     // min = Sys.min(min, current)
     push local 0
-    push temp 2
+    push local 3
     call Sys.min 2
     pop local 0
 
     // max = Sys.max(max, current)
     push local 1
-    push temp 2
+    push local 3
     call Sys.max 2
     pop local 1
 
-    // current address++
-    push temp 0
+    // index = index + 1
+    push local 2
     push constant 1
     add
-    pop temp 0
+    pop local 2
 
-    // remaining--
-    push temp 1
-    push constant 1
-    sub
-    pop temp 1
+    goto SYS_RANGE_LOOP
 
-    goto RANGE_LOOP
-
-label RANGE_DONE
+label SYS_RANGE_END
     // return max - min
     push local 1
     push local 0
@@ -126,11 +111,9 @@ label RANGE_DONE
 
 
 
-//// ENTRY POINT
-// Keep this exactly like the starter file.
-
+// The emulator will start executing from here.
+// Keep this version when running Sys.tst.
 function Sys.init 0
     call Sys.range 2
-
 label WHILE
     goto WHILE
