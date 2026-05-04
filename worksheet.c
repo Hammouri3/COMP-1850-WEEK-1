@@ -2,6 +2,8 @@
 
 /*
  * Task 1 Functions Practice
+ * Name:
+ * ID:
  */
 
 int add_values(int a, int b) {
@@ -37,8 +39,7 @@ double average(int *array, int length) {
         return 0.0;
     }
 
-    int total = sum_array(array, length);
-    return (double) total / length;
+    return (double) sum_array(array, length) / length;
 }
 
 void find_max(int *array, int length, int *max_value) {
@@ -53,4 +54,34 @@ void find_max(int *array, int length, int *max_value) {
             *max_value = array[i];
         }
     }
+}
+
+int main(void) {
+    int a = 3;
+    int b = 4;
+
+    printf("add_values(3, 4) = %d\n", add_values(a, b));
+
+    swap_values(&a, &b);
+    printf("After swap: a = %d, b = %d\n", a, b);
+
+    int numbers[] = {1, 2, 3, 4, 5};
+    int length = 5;
+
+    printf("sum_array = %d\n", sum_array(numbers, length));
+    printf("average = %.2f\n", average(numbers, length));
+
+    int max_value;
+    find_max(numbers, length, &max_value);
+    printf("max = %d\n", max_value);
+
+    reverse_array(numbers, length);
+
+    printf("reversed array:");
+    for (int i = 0; i < length; i++) {
+        printf(" %d", numbers[i]);
+    }
+    printf("\n");
+
+    return 0;
 }
