@@ -6,28 +6,33 @@
  * ID: 201952967
  */
 
-int main(void) {
+int main( void ) {
 
     // define and initialise variables for the problem data
-    float salary = 36250.0f;
-    float niRate = 8.0f;
-    float taxRate = 15.0f;
-    float taxFreeAllowance = 12500.0f;
+    double salary = 36250.0;
+    double ni_rate = 8.0;     // %
+    double tax_rate = 15.0;   // %
+    double tax_free_allowance = 12500.0;
 
     // calculate the deductions and final take-home salary
-    float niContribution = salary * niRate / 100.0f;
-    float taxableSalary = salary - niContribution - taxFreeAllowance;
+    double ni_contribution = salary * (ni_rate / 100.0);
 
-    if (taxableSalary < 0.0f) {
-        taxableSalary = 0.0f;
+    double remaining_after_ni = salary - ni_contribution;
+
+    double taxable_amount = remaining_after_ni - tax_free_allowance;
+    if (taxable_amount < 0.0) {
+        taxable_amount = 0.0;
     }
 
-    float taxContribution = taxableSalary * taxRate / 100.0f;
-    float takeHomeSalary = salary - niContribution - taxContribution;
+    double tax_contribution = taxable_amount * (tax_rate / 100.0);
 
-    printf("NI contribution £%.2f\n", niContribution);
-    printf("Tax contribution £%.2f\n", taxContribution);
-    printf("Take home salary £%.2f\n", takeHomeSalary);
+    double take_home_salary = salary - ni_contribution - tax_contribution;
+
+    // Use only these print statement with appropriate formatting and variable names
+    printf("Salary £%.2f\n", salary);
+    printf("NI contribution £%.2f\n", ni_contribution);
+    printf("Tax contribution £%.2f\n", tax_contribution);
+    printf("Take home salary £%.2f\n", take_home_salary);
 
     return 0;
 }
