@@ -2,8 +2,8 @@
 
 /*
  * Portfolio submission
- * Name:
- * ID:
+ * Name: Ahmad Hammouri
+ * ID: 201952967
  */
 
 int main(void) {
@@ -25,7 +25,6 @@ int main(void) {
     float taxContribution = taxableSalary * taxRate / 100.0f;
     float takeHomeSalary = salary - niContribution - taxContribution;
 
-    // Use only these print statement with appropriate formatting and variable names
     printf("NI contribution £%.2f\n", niContribution);
     printf("Tax contribution £%.2f\n", taxContribution);
     printf("Take home salary £%.2f\n", takeHomeSalary);
