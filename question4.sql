@@ -1,10 +1,10 @@
 SELECT
-    Students.StudentId,
-    Students.FirstName,
-    Students.LastName,
-    Courses.CourseName
-FROM Students
-JOIN Enrolments
-    ON Students.StudentId = Enrolments.StudentId
-JOIN Courses
-    ON Enrolments.CourseId = Courses.CourseId;
+    Student.StudentId,
+    Student.FirstName,
+    Student.LastName,
+    Course.CourseName
+FROM Student
+JOIN Enrolment
+    ON Student.StudentId = Enrolment.StudentId
+JOIN Course
+    ON Enrolment.CourseId = Course.CourseId;
