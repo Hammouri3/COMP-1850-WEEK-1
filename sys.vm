@@ -1,0 +1,105 @@
+// Sys.vm
+
+function Sys.init 0
+    push constant 4
+    push constant 2
+    call Sys.min 2
+    // (change this section to test different functions)
+
+
+function Sys.min 0
+    push argument 0
+    push argument 1
+    lt
+    if-goto MIN_FIRST
+    push argument 1
+    return
+label MIN_FIRST
+    push argument 0
+    return
+
+
+function Sys.max 0
+    push argument 0
+    push argument 1
+    gt
+    if-goto MAX_FIRST
+    push argument 1
+    return
+label MAX_FIRST
+    push argument 0
+    return
+
+
+function Sys.range 4
+    push argument 1
+    push constant 1
+    gt
+    not
+    if-goto RETURN_ZERO
+
+    push argument 0
+    pop local 2
+    push argument 1
+    pop local 3
+
+    push local 2
+    pop pointer 1
+    push that 0
+    pop local 0
+
+    push local 2
+    pop pointer 1
+    push that 0
+    pop local 1
+
+    push local 2
+    push constant 1
+    add
+    pop local 2
+    push local 3
+    push constant 1
+    sub
+    pop local 3
+
+label LOOP
+    push local 3
+    push constant 0
+    gt
+    not
+    if-goto DONE
+
+    push local 0
+    push local 2
+    pop pointer 1
+    push that 0
+    call Sys.min 2
+    pop local 0
+
+    push local 1
+    push local 2
+    pop pointer 1
+    push that 0
+    call Sys.max 2
+    pop local 1
+
+    push local 2
+    push constant 1
+    add
+    pop local 2
+    push local 3
+    push constant 1
+    sub
+    pop local 3
+
+    goto LOOP
+
+label DONE
+    push local 1
+    push local 0
+    sub
+    return
+
+label RETURN_ZERO
+    push constant 0
+    return
