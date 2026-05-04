@@ -22,76 +22,69 @@ label MAX_FIRST
     return
 
 
-function Sys.range 4
+function Sys.range 2
+    // If n <= 1, return 0
     push argument 1
     push constant 1
     gt
     not
-    if-goto RETURN_ZERO
+    if-goto IS_ZERO
 
+    // Initialize min (local 0) and max (local 1) to arr[0]
     push argument 0
-    pop local 2
-    push argument 1
-    pop local 3
-
-    push local 2
     pop pointer 1
     push that 0
     pop local 0
-
-    push local 2
+    push argument 0
     pop pointer 1
     push that 0
     pop local 1
 
-    push local 2
-    push constant 1
-    add
-    pop local 2
-    push local 3
+label LOOP
+    // Decrement remaining count
+    push argument 1
     push constant 1
     sub
-    pop local 3
+    pop argument 1
 
-label LOOP
-    push local 3
+    // If count reached 0, we're done
+    push argument 1
     push constant 0
-    gt
-    not
+    eq
     if-goto DONE
 
-    push local 0
-    push local 2
+    // Advance to next array element
+    push argument 0
+    push constant 1
+    add
+    pop argument 0
+
+    // THAT = current address
+    push argument 0
     pop pointer 1
+
+    // min = Sys.min(min, *current)
+    push local 0
     push that 0
     call Sys.min 2
     pop local 0
 
+    // max = Sys.max(max, *current)
     push local 1
-    push local 2
-    pop pointer 1
     push that 0
     call Sys.max 2
     pop local 1
 
-    push local 2
-    push constant 1
-    add
-    pop local 2
-    push local 3
-    push constant 1
-    sub
-    pop local 3
-
     goto LOOP
 
 label DONE
+    // Push max, push min, compute difference
     push local 1
     push local 0
     sub
     return
 
-label RETURN_ZERO
+label IS_ZERO
     push constant 0
     return
 
