@@ -1,115 +1,102 @@
-// ---------------------------------------------------------------
-// Sys.min - returns the minimum of two values (argument 0, 1)
-// ---------------------------------------------------------------
+// Required entry point
+function Sys.init 0
+call Sys.range 2
+label END
+goto END
+
+
 function Sys.min 0
-    push argument 0
-    push argument 1
-    lt
-    if-goto SYS_MIN_RET_A
-    push argument 1
-    return
-label SYS_MIN_RET_A
-    push argument 0
-    return
+push argument 0
+push argument 1
+lt
+if-goto A_SMALL
+push argument 1
+return
+label A_SMALL
+push argument 0
+return
 
-// ---------------------------------------------------------------
-// Sys.max - returns the maximum of two values (argument 0, 1)
-// ---------------------------------------------------------------
+
 function Sys.max 0
-    push argument 0
-    push argument 1
-    gt
-    if-goto SYS_MAX_RET_A
-    push argument 1
-    return
-label SYS_MAX_RET_A
-    push argument 0
-    return
+push argument 0
+push argument 1
+gt
+if-goto A_BIG
+push argument 1
+return
+label A_BIG
+push argument 0
+return
 
-// ---------------------------------------------------------------
-// Sys.range - returns the range (max - min) of an array
-//   argument 0: address of first element
-//   argument 1: number of elements n
-//   returns 0 if n <= 1
-// ---------------------------------------------------------------
+
 function Sys.range 4
-    // local 0 = running min
-    // local 1 = running max
-    // local 2 = current address pointer
-    // local 3 = remaining count
+// local 0 = min
+// local 1 = max
+// local 2 = i
+// local 3 = current
 
-    // if n < 2 return 0
-    push argument 1
-    push constant 2
-    lt
-    if-goto SYS_RANGE_ZERO
+push argument 1
+push constant 1
+gt
+if-goto START
+push constant 0
+return
 
-    // initialise min and max with arr[0]
-    push argument 0
-    pop pointer 1
-    push that 0
-    pop local 0
-    push argument 0
-    pop pointer 1
-    push that 0
-    pop local 1
+label START
 
-    // local 2 = argument 0 + 1   (address of arr[1])
-    push argument 0
-    push constant 1
-    add
-    pop local 2
+// min = arr[0]
+push argument 0
+pop pointer 1
+push that 0
+pop local 0
 
-    // local 3 = n - 1   (remaining elements to scan)
-    push argument 1
-    push constant 1
-    sub
-    pop local 3
+// max = arr[0]
+push argument 0
+pop pointer 1
+push that 0
+pop local 1
 
-label SYS_RANGE_LOOP
-    // exit when local 3 == 0
-    push local 3
-    push constant 0
-    eq
-    if-goto SYS_RANGE_DONE
+// i = 1
+push constant 1
+pop local 2
 
-    // local 0 = Sys.min(local 0, arr[local 2])
-    push local 0
-    push local 2
-    pop pointer 1
-    push that 0
-    call Sys.min 2
-    pop local 0
+label LOOP
+push local 2
+push argument 1
+lt
+not
+if-goto END
 
-    // local 1 = Sys.max(local 1, arr[local 2])
-    push local 1
-    push local 2
-    pop pointer 1
-    push that 0
-    call Sys.max 2
-    pop local 1
+// current = arr[i]
+push argument 0
+push local 2
+add
+pop pointer 1
+push that 0
+pop local 3
 
-    // advance pointer
-    push local 2
-    push constant 1
-    add
-    pop local 2
+// min update
+push local 0
+push local 3
+call Sys.min 2
+pop local 0
 
-    // decrement counter
-    push local 3
-    push constant 1
-    sub
-    pop local 3
+// max update
+push local 1
+push local 3
+call Sys.max 2
+pop local 1
 
-    goto SYS_RANGE_LOOP
+// i++
+push local 2
+push constant 1
+add
+pop local 2
 
-label SYS_RANGE_DONE
-    // return local 1 - local 0   (max - min)
-    push local 1
-    push local 0
-    sub
-    return
+goto LOOP
 
-label SYS_RANGE_ZERO
-    push constant 0
-    return
+label END
+push local 1
+push local 0
+sub
+return
