@@ -1,102 +1,112 @@
 // Required entry point
 function Sys.init 0
-call Sys.range 2
+    call Sys.range 2
 label END
-goto END
+    goto END
 
 
+// Returns the smaller of two arguments
 function Sys.min 0
-push argument 0
-push argument 1
-lt
-if-goto A_SMALL
-push argument 1
-return
+    push argument 0
+    push argument 1
+    lt
+    if-goto A_SMALL
+
+    push argument 1
+    return
+
 label A_SMALL
-push argument 0
-return
+    push argument 0
+    return
 
 
+// Returns the larger of two arguments
 function Sys.max 0
-push argument 0
-push argument 1
-gt
-if-goto A_BIG
-push argument 1
-return
+    push argument 0
+    push argument 1
+    gt
+    if-goto A_BIG
+
+    push argument 1
+    return
+
 label A_BIG
-push argument 0
-return
+    push argument 0
+    return
 
 
+// Computes the range of an array: max - min
 function Sys.range 4
-// local 0 = min
-// local 1 = max
-// local 2 = i
-// local 3 = current
+    // local 0 = min
+    // local 1 = max
+    // local 2 = i
+    // local 3 = current
 
-push argument 1
-push constant 1
-gt
-if-goto START
-push constant 0
-return
+    // If array length <= 1, return 0
+    push argument 1
+    push constant 1
+    gt
+    if-goto START
+
+    push constant 0
+    return
 
 label START
+    // min = arr[0]
+    push argument 0
+    pop pointer 1
+    push that 0
+    pop local 0
 
-// min = arr[0]
-push argument 0
-pop pointer 1
-push that 0
-pop local 0
+    // max = arr[0]
+    push argument 0
+    pop pointer 1
+    push that 0
+    pop local 1
 
-// max = arr[0]
-push argument 0
-pop pointer 1
-push that 0
-pop local 1
-
-// i = 1
-push constant 1
-pop local 2
+    // i = 1
+    push constant 1
+    pop local 2
 
 label LOOP
-push local 2
-push argument 1
-lt
-not
-if-goto END
+    // while i < length
+    push local 2
+    push argument 1
+    lt
+    not
+    if-goto RANGE_END
 
-// current = arr[i]
-push argument 0
-push local 2
-add
-pop pointer 1
-push that 0
-pop local 3
+    // current = arr[i]
+    push argument 0
+    push local 2
+    add
+    pop pointer 1
+    push that 0
+    pop local 3
 
-// min update
-push local 0
-push local 3
-call Sys.min 2
-pop local 0
+    // min = Sys.min(min, current)
+    push local 0
+    push local 3
+    call Sys.min 2
+    pop local 0
 
-// max update
-push local 1
-push local 3
-call Sys.max 2
-pop local 1
+    // max = Sys.max(max, current)
+    push local 1
+    push local 3
+    call Sys.max 2
+    pop local 1
 
-// i++
-push local 2
-push constant 1
-add
-pop local 2
+    // i++
+    push local 2
+    push constant 1
+    add
+    pop local 2
 
-goto LOOP
+    goto LOOP
 
-label END
-push local 1
-push local 0
-sub
-return
+label RANGE_END
+    // return max - min
+    push local 1
+    push local 0
+    sub
+    return
